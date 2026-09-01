@@ -45,8 +45,9 @@ class ProdutoVenda(Produto):
         return self._quantidade * self._preco
     def __str__(self):
         texto = super().__str__()
-        texto += 'Qtde {q:.3f}'.format(q=self._quantidade)
-        texto += 'Total R${v:.2f}'.format(v=self.total)
+        texto += '\nQtde {q:.3f}'.format(q=self._quantidade)
+        texto += '\nTotal R${v:.2f}'.format(v=self.total)
+        return texto
 
 class Venda:
     def __init__(self):
@@ -69,9 +70,8 @@ class Venda:
         texto += '\n== Produtos =='
         for produto in self._lista_produtos:
             texto += '\n'+str(produto)
-        texto += '\n' * 20
-        texto += 'Total venda: R${v:0.2f}'.format(self._total_venda)
-        texto += '\n' * 50
+        texto += '\n---------------------------\n'
+        texto += 'Total venda: R${v:0.2f}'.format(v=self._total_venda)
         return texto
 
 def pergunta(mensagem, tipo=int):
@@ -176,12 +176,63 @@ class Caixa:
                 if confirma("Cadastrar outro produto? (S/N): ", 'S'):
                     continue
                 else: break
+    def venda(self):
+        venda = Venda()
+        while True:
+            print('\n'*5)
+            print("== Venda ==")
+            print("-> Produtos:")
+            for cod, produto in self._produtos.items():
+                print(f'[{cod}] - {produto}')
+            print("\n- Digite o codigo abaixo para adicionar ao carrinho -")
+            cod = pergunta("Codigo: ", int)
+            if cod in self._produtos:
+                quantidade = pergunta("Digite a quantidade: ", int)
+                if not self._produtos[cod].saida(quantidade):
+                    print("Valor acima do estoque disponivel!")
+                    continue
+                produto_venda = ProdutoVenda(self._produtos[cod].descricao,
+                                            self._produtos[cod].preco,
+                                            quantidade)
+                venda.adiciona_produto(produto_venda)
+                if quantidade > 0:
+                    self._vendas.append(venda)
+                print("Produto adicionando com sucesso!")
+                if confirma('\nAdicionar outro produto? (S/N)', 'S'):
+                    continue
+                else: print(venda); break
+            else:
+                print("** Produto inválido **")
+                if confirma('Adicionar outro produto? (S/N)', 'S'):
+                    continue
+                else: break
+    def relatorio_vendas(self):
+        print('\n' * 10)
+        print("== Relatorio Vendas ==")
+        if len(self._vendas) == 0:
+            print("Nenhuma venda encontrada!")
+            return
+        total_geral = 0
+        for cont, venda in enumerate(self._vendas):
+            print(f"\nVenda {cont}")
+            print(venda)
+            total_geral += venda.total
+        print(f"TOTAL GERAL: R$ {total_geral}")
+        input("Pressione Enter para voltar.")
+    
+    def inciar(self):
+        while True:
+            escolha = self.menu()
+            match escolha:
+                case'C': self.cadastrar_produto()
+                case'E': self.entrada_estoque()
+                case'A': self.atualiza_produto()
+                case'V': self.venda()
+                case'R': self.relatorio_vendas()
+                case'S': break;
 
+def main():
+    caixa = Caixa()
+    caixa.inciar()
 
-
-
-caixa = Caixa()
-caixa.menu()
-caixa.cadastrar_produto()
-caixa.atualiza_produto()
-caixa.entrada_estoque()
+main()
