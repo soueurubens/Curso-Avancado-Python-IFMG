@@ -33,7 +33,7 @@ class ProdutoEstoque(Produto):
 
     def __str__(self):
         texto = super().__str__()
-        texto += 'Estoque {e:0.3f}'.format(e=self._estoque)
+        texto += ' | Estoque {e:0.0f}'.format(e=self._estoque)
         return texto
 
 class ProdutoVenda(Produto):
@@ -86,3 +86,102 @@ def confirma(mensagem, resposta):
         return True
     return False
 
+class Caixa:
+    def __init__(self):
+        self._produtos = {}
+        self._vendas = []
+
+    @classmethod
+    def menu(cls):
+        print()
+        print('********************************')
+        print('*           CAIXA              *')
+        print('********************************')
+        print('(C) Cadastrar produto ')
+        print('(A) atualizar produto ')
+        print('(E) Entrada de estoque          ')
+        print('(V) Vender                      ')
+        print('(R) Relatório de vendas         ')
+        print('(S) Sair                        ')
+        print('********************************')
+        escolha = input('Informe sua opção: ').upper()
+        return escolha
+
+    def dados_brutos(self):
+        print("Informe os dados: ")
+        descricao = input("Descrição: ").strip()
+        preco = pergunta('Preço: ', float)
+        return descricao, preco
+    def analisar_produtos(self, descricao):
+        for produto in self._produtos.values():
+            if produto.descricao.lower() == descricao.lower():
+                return True
+        return False
+    def cadastrar_produto(self):
+        print('\n' * 5)
+        print("\n == Cadastro de produto ==")
+        while True:
+            resultado = self.dados_brutos()
+            descricao, preco = resultado
+            # Analisando se o item já esta cadastrado
+            if self.analisar_produtos(descricao):
+                if confirma("Cadastrar outro produto? (S/N): ", 'S'):
+                    continue
+                else: break
+            # Cadastrando o item 
+            produto = ProdutoEstoque(descricao, preco)
+            codigo = len(self._produtos)
+            self._produtos[codigo] = produto 
+            print("Produto cadastrado com sucesso!")
+            break
+    def atualiza_produto(self):
+        print('\n' * 5)
+        while True:
+            print("== Atualiza produto ==")
+            for cod, produto in self._produtos.items():
+                print(f'{cod}: {produto}')
+            print("----------------------")
+        
+            cod = pergunta("Codigo: ")
+            if cod in self._produtos:
+                resposta = self.dados_brutos()
+                if resposta:
+                    descricao, preco = resposta
+                    self._produtos[cod].descricao = descricao
+                    self._produtos[cod].preco = preco
+                    print("Produto atualizado com sucesso!")
+                    print(f'{cod}: {self._produtos[cod]}')
+                    break
+            else:
+                if confirma("Continuar atualizando? (S/N)", 'S'):
+                    continue
+                else: break
+    def entrada_estoque(self):
+        while True:
+            print('\n' * 5)
+            print("=== Adicionando produtos ao estoque ==")
+            for cod, produto in self._produtos.items():
+                print(f'{cod}: {produto}')
+            print("----------------------")
+            
+            cod = pergunta("Codigo: ", int)
+            if cod in self._produtos:
+                quantidade = pergunta("Quantidade de entrada: ", int)
+                self._produtos[cod].entrada(quantidade)
+                print("Quantidade adicionanda com sucesso!")
+                print(f'{cod}: {self._produtos[cod]}')
+                break;
+            else:
+                print("Produto não encontrado!")
+                if confirma("Cadastrar outro produto? (S/N): ", 'S'):
+                    continue
+                else: break
+
+
+
+
+caixa = Caixa()
+caixa.menu()
+caixa.cadastrar_produto()
+caixa.atualiza_produto()
+caixa.entrada_estoque()
