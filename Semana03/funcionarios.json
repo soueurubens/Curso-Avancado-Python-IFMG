@@ -1,0 +1,48 @@
+[
+    {
+        "cpf": "12345678901",
+        "nome": "João da Silva",
+        "tempo_servico": "5 anos",
+        "dependentes": [
+            "Maria da Silva",
+            "Pedro da Silva"
+        ],
+        "salario": 3500.5
+    },
+    {
+        "cpf": "23456789012",
+        "nome": "Ana Oliveira",
+        "tempo_servico": "2 anos",
+        "dependentes": [],
+        "salario": 2800.0
+    },
+    {
+        "cpf": "34567890123",
+        "nome": "Carlos Santos",
+        "tempo_servico": "8 anos",
+        "dependentes": [
+            "Lucas Santos"
+        ],
+        "salario": 5200.75
+    },
+    {
+        "cpf": "45678901234",
+        "nome": "Mariana Costa",
+        "tempo_servico": "3 anos",
+        "dependentes": [
+            "Beatriz Costa",
+            "Rafael Costa",
+            "Gabriel Costa"
+        ],
+        "salario": 4100.0
+    },
+    {
+        "cpf": "56789012345",
+        "nome": "Pedro Almeida",
+        "tempo_servico": "1 ano",
+        "dependentes": [
+            "Julia Almeida"
+        ],
+        "salario": 2500.25
+    }
+]
